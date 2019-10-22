@@ -2,3 +2,6 @@
 /include
 /lib
 .Python
+
+.DS_Store
+*.pyc
