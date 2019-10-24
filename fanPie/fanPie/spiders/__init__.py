@@ -44,6 +44,13 @@ class filmSpider(scrapy.Spider):
         l.add_value('episode', response.meta['episode'])
         l.add_value('film', response.meta['film'])
         l.add_value('hosts', response.meta['hosts'])
+        
+        st = response.text.find(r'<div class="rich_media_content')
+        main = response.text[st:]
+        ed = main.find(r'</div>')
+        main = main[:ed]
+        shownotes = re.sub(r'<[^>]*>', '', main).strip() if ed!=-1 and response.status==200 else ''
+        l.add_value('shownotes', shownotes)
         yield l.load_item()
 
 if __name__ == "__main__":
