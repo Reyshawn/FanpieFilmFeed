@@ -8,7 +8,6 @@ from scrapy.loader import ItemLoader
 from ..items import FanpieItem
 import re
 
-pattern = re.compile('[0-9]{3}')
 index = 0
 
 class filmSpider(scrapy.Spider):
@@ -19,20 +18,33 @@ class filmSpider(scrapy.Spider):
 
     def parse(self, response):
         urls = response.css('div.rich_media_content p')
-        for i in urls:
-            num = i.css('span::text').get()
-            if num and pattern.match(num):
-                print('num:', num)
+        for i in urls[1:]:
+            title = re.sub(r'<[^>]*>', '', i.get()).strip()
+            if title:
+                num = title[:3]
+                sep = title.find('（')
+                film = title[4:sep]
+
+                hosts_strip = re.search(r'(?:嘉宾：)([^）]*)', title[sep:])
+                hosts = hosts_strip[1].split('、') if hosts_strip else []
+
+                print('title:', title)
                 if i.css('a'):
                     url = i.css('a').attrib['href']
-                    yield scrapy.Request(url, self.parse_article)
+                    request = scrapy.Request(url, self.parse_article)
+                    request.meta['episode'] = num
+                    request.meta['film'] = film
+                    request.meta['hosts'] = hosts
+                    yield request
                 
 
     def parse_article(self, response):
         l = ItemLoader(item=FanpieItem(), response=response)
         l.add_css('title', '.rich_media_title::text')
+        l.add_value('episode', response.meta['episode'])
+        l.add_value('film', response.meta['film'])
+        l.add_value('hosts', response.meta['hosts'])
         yield l.load_item()
-        # yield {'title': response.css('.rich_media_title::text').get()}
 
 if __name__ == "__main__":
     pass

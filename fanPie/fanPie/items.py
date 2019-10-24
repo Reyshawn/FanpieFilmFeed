@@ -12,6 +12,7 @@ class FanpieItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     episode = scrapy.Field()
+    film = scrapy.Field()
     title = scrapy.Field()
     hosts = scrapy.Field()
     shownotes = scrapy.Field()
