@@ -17,6 +17,8 @@ class FanpieItem(scrapy.Item):
     title = scrapy.Field()
     hosts = scrapy.Field()
     shownotes = scrapy.Field(output_processor=TakeFirst())
+    url = scrapy.Field(output_processor=TakeFirst())
+    pub_date = scrapy.Field(output_processor=TakeFirst())
 
 
 if __name__ == "__main__":

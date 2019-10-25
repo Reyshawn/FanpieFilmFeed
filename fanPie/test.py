@@ -79,15 +79,17 @@ def test_data(path):
     with open(path, 'r') as f:
         data = json.load(f)
     
-    res = []
     for i in range(len(data)):
-        tmp = {}
-        tmp['episode'] = data[i]['episode']
-        tmp['film_list_original'] = data[i]['shownotes']['film_list_original']
-        res.append(tmp)
+        try:
+            if data[i]['url'] == '':
+                print(i)
+                print(data[i]['episode'])
+        except:
+            print(i)
+            print('episode', data[i]['episode'])
 
-    with open('/Users/reyshawn/Desktop/test.json', 'w+') as f:
-        json.dump(res, f, ensure_ascii=False)
+    # with open('/Users/reyshawn/Desktop/test.json', 'w+') as f:
+    #     json.dump(res, f, ensure_ascii=False)
 
 if __name__ == "__main__":
     load_data(ORIGINAL_PATH, OUTPUT_PATH)

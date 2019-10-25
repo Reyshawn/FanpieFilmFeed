@@ -54,6 +54,15 @@ class filmSpider(scrapy.Spider):
         shownotes = {'shownotes_original': shownotes}
 
         l.add_value('shownotes', shownotes)
+
+        url = re.search(r'http://image\.kaolafm\.net/mz/audios/[0-9]*/[0-9a-z\-]*\.mp3', response.text)
+        url = url[0] if url else '❌'
+        l.add_value('url', url)
+
+        pub_date = re.search(r'[a-z]="([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))";', response.text)
+        pub_date = pub_date[1] if pub_date else '❌'
+        l.add_value('pub_date', pub_date)
+
         yield l.load_item()
 
 if __name__ == "__main__":
