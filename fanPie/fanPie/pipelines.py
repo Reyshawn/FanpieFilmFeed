@@ -26,7 +26,7 @@ class NotesParser:
     def __init__(self, episode):
         episode['shownotes']['shownotes_original'] = episode['shownotes']['shownotes_original'].replace('&nbsp;', ' ')
         self._shownotes = episode['shownotes']['shownotes_original']
-        list_pos_1 = ['本期节目重点提及', '本期片目', '节目提及', '本期节目重点提及的电影片单']
+        list_pos_1 = ['本期节目重点提及', '本期片目', '本期涉及', '节目提及', '本期节目重点提及的电影片单', '重点提及的电影片单', '相关泛音乐传记类型影片', '话题：按时间顺序', '节目中谈及的广义上的徐克作品']
         list_pos_2 = ['往期节目', '若想下载', '安卓用户下载', '抽奖', '获奖', '本周热映新片', '本周新推送节目', '片子基本信息', '耳旁风', '立刻收听', '若批评不自由，则赞美无意义', '2018年其它']
         self._pos_1 = self.find_pos(list_pos_1, self._shownotes)
         self._pos_2 = self._pos_1 + self.find_pos(list_pos_2, self._shownotes[self._pos_1:])
