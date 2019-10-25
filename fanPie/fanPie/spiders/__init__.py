@@ -23,10 +23,10 @@ class filmSpider(scrapy.Spider):
             if title:
                 num = title[:3]
                 sep = title.find('（')
-                film = title[4:sep]
+                film = title[4:sep].strip()
 
                 hosts_strip = re.search(r'(?:嘉宾：)([^）]*)', title[sep:])
-                hosts = hosts_strip[1].split('、') if hosts_strip else []
+                hosts = hosts_strip[1].split('、') if hosts_strip else ['波米']
 
                 print('title:', title)
                 if i.css('a'):
