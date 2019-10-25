@@ -50,6 +50,9 @@ class filmSpider(scrapy.Spider):
         ed = main.find(r'</div>')
         main = main[:ed]
         shownotes = re.sub(r'<[^>]*>', '', main).strip() if ed!=-1 and response.status==200 else ''
+
+        shownotes = {'shownotes_original': shownotes}
+
         l.add_value('shownotes', shownotes)
         yield l.load_item()
 

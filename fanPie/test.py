@@ -7,19 +7,19 @@ import re
 class NotesParser:
     
     def __init__(self, episode):
-        episode['shownotes'][0] = episode['shownotes'][0].replace('&nbsp;', ' ')
-        self._shownotes = episode['shownotes'][0]
+        episode['shownotes']['shownotes_original'] = episode['shownotes']['shownotes_original'].replace('&nbsp;', ' ')
+        self._shownotes = episode['shownotes']['shownotes_original']
         list_pos_1 = ['本期节目重点提及', '本期片目', '节目提及', '本期节目重点提及的电影片单']
         list_pos_2 = ['往期节目', '若想下载', '安卓用户下载', '抽奖', '获奖', '本周热映新片', '本周新推送节目', '片子基本信息', '耳旁风', '立刻收听', '若批评不自由，则赞美无意义', '2018年其它']
         self._pos_1 = self.find_pos(list_pos_1, self._shownotes)
         self._pos_2 = self._pos_1 + self.find_pos(list_pos_2, self._shownotes[self._pos_1:])
 
-        episode['film_list_range'] = (self._pos_1, self._pos_2)
-        episode['film_list_original'] = self._shownotes[self._pos_1:self._pos_2]
-        episode['film_list'] = self.pars_film_list(episode['film_list_original'])
+        episode['shownotes']['film_list_range'] = (self._pos_1, self._pos_2)
+        episode['shownotes']['film_list_original'] = self._shownotes[self._pos_1:self._pos_2]
+        episode['shownotes']['film_list'] = self.pars_film_list(episode['shownotes']['film_list_original'])
 
-        episode['film_outline'] = self.pars_outline(self._shownotes[:self._pos_1])
-        episode['film_scoring'] = self.pars_scoring(self._shownotes)
+        episode['shownotes']['film_outline'] = self.pars_outline(self._shownotes[:self._pos_1])
+        episode['shownotes']['film_scoring'] = self.pars_scoring(self._shownotes)
 
     
     # find the beginning position of some sections, film list, outline, scoring
@@ -83,7 +83,7 @@ def test_data(path):
     for i in range(len(data)):
         tmp = {}
         tmp['episode'] = data[i]['episode']
-        tmp['film_list_original'] = data[i]['film_list_original']
+        tmp['film_list_original'] = data[i]['shownotes']['film_list_original']
         res.append(tmp)
 
     with open('/Users/reyshawn/Desktop/test.json', 'w+') as f:

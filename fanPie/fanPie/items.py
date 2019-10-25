@@ -6,16 +6,17 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
+from scrapy.loader.processors import TakeFirst
 
 
 class FanpieItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    episode = scrapy.Field()
-    film = scrapy.Field()
+    episode = scrapy.Field(output_processor=TakeFirst())
+    film = scrapy.Field(output_processor=TakeFirst())
     title = scrapy.Field()
     hosts = scrapy.Field()
-    shownotes = scrapy.Field()
+    shownotes = scrapy.Field(output_processor=TakeFirst())
 
 
 if __name__ == "__main__":
