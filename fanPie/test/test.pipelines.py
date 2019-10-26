@@ -86,7 +86,7 @@ def test_data(path):
     
     for i in range(len(data)):
         try:
-            if data[i]['url'] == '':
+            if data[i]['url'] == '❌':
                 print(i)
                 print(data[i]['episode'])
         except:
@@ -99,4 +99,3 @@ def test_data(path):
 if __name__ == "__main__":
     # load_data(ORIGINAL_PATH, OUTPUT_PATH)
     # test_data(OUTPUT_PATH)
-    pass
