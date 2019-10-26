@@ -59,6 +59,10 @@ class NotesParser:
         return res
 
 
+def parse_xml(data):
+    pass
+
+
 
 ORIGINAL_PATH = '/Users/reyshawn/Desktop/FanpieFilm/fanPie/output.json'
 OUTPUT_PATH = '/Users/reyshawn/Desktop/output.json'
@@ -69,7 +73,8 @@ def load_data(path, output):
         data = json.load(f)
     
     for i in range(len(data)):
-        x = NotesParser(data[i])
+        # x = NotesParser(data[i])
+        pass
     
     with open(output, 'w+') as f:
         json.dump(data, f, ensure_ascii=False)
@@ -92,9 +97,6 @@ def test_data(path):
     #     json.dump(res, f, ensure_ascii=False)
 
 if __name__ == "__main__":
-    load_data(ORIGINAL_PATH, OUTPUT_PATH)
-    test_data(OUTPUT_PATH)
-    
-    
-
-    
+    # load_data(ORIGINAL_PATH, OUTPUT_PATH)
+    # test_data(OUTPUT_PATH)
+    pass

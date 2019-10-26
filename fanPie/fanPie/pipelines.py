@@ -10,7 +10,7 @@ class FanpiePipeline(object):
 
     def open_spider(self, spider):
         print('start the pipeline!!!!!!')
-    
+
     def close_spider(self, spider):
         print('close the pipeline⚠️')
 
@@ -22,7 +22,7 @@ class FanpiePipeline(object):
 
 
 class NotesParser:
-    
+
     def __init__(self, episode):
         episode['shownotes']['shownotes_original'] = episode['shownotes']['shownotes_original'].replace('&nbsp;', ' ')
         self._shownotes = episode['shownotes']['shownotes_original']
@@ -38,7 +38,7 @@ class NotesParser:
         episode['shownotes']['film_outline'] = self.pars_outline(self._shownotes[:self._pos_1])
         episode['shownotes']['film_scoring'] = self.pars_scoring(self._shownotes)
 
-    
+
     # find the beginning position of some sections, film list, outline, scoring
     def find_pos(self, key_words, section):
         pos = len(section)
@@ -65,7 +65,7 @@ class NotesParser:
 
     def pars_film_list(self, section):
         pattern = r'《([^》]*)》[^《》]*?\(?[^)]*?([0-9]{4}|[0-9]{4}-[0-9]{4})[^)]*?\)?'
-        
+
         matches = re.findall(pattern, section)
         res = []
         for name, time in matches:
