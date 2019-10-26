@@ -1,9 +1,10 @@
 import json
 import re
-from utils import ORIGINAL_PATH, OUTPUT_PATH, load_data
+from utils import ORIGINAL_PATH, load_data
 
 # re = r'《([^》]*)》[ ]*?[(|（]?[^()（）]*?([0-9]{4})[)|）]?'
-
+ORIGINAL_PATH = '/Users/reyshawn/Desktop/FanpieFilm/fanPie/output.json'
+OUTPUT_PATH = '/Users/reyshawn/Desktop/output.json'
 
 class NotesParser:
     
@@ -58,6 +59,15 @@ class NotesParser:
             tmp['time'] = time
             res.append(tmp)
         return res
+
+
+
+def load_data(path, output):
+    with open(path, 'r') as f:
+        data = json.load(f)
+    
+    with open(output, 'w+') as f:
+        json.dump(data, f, ensure_ascii=False)
 
 
 def test_data(path):
