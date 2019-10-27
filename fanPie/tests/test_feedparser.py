@@ -62,6 +62,8 @@ class JsonParser:
             'email': 'reshawnchang@gamil.com'
         }
 
+
+
         self._feed = None
 
     # sort items by episode number
@@ -240,11 +242,106 @@ def test_get_duration(data, path):
             print('episode: ', item['episode'])
 
 
-if __name__ == "__main__":
-    # with open('/Users/reyshawn/Desktop/output.json', 'r') as f:
-    #     data = json.load(f)
+def test_parse_shownotes(data):
+    def _format_scoring(s, hosts, item):
+        patterns = [
+            r'(《[^》]*?》([\(|（][^\)]*?[\)|）])?)(综合)?(平均)?总?分数?[：|:]约?(?P<score>[0-9\.]*)分?',
+            r'[(综合)|(平均)|总]分数?[：|:]约?(?P<score>[0-9\.]*)分?'
+        ]
 
+        if s == '❌':
+            return s
+        end_s = re.search(r'[(|（]?音频后期制作', s)
+        if end_s:
+            end = s[end_s.span()[0]:]
+            s = s[:end_s.span()[0]]
+        else:
+            end = ''
+
+        if '波米' not in hosts:
+            hosts.append('波米')
+
+        for pattern in patterns:
+            ave = re.search(pattern, s)
+            if ave and ave['score']:
+                s = re.sub(pattern, '', s)
+                break
+        
+        s = s.replace('&amp;', '&')
+        s = s.replace('（以下广告，由微信平台自动插入，我们编辑文章时看不到内容，每位读者看到的也并不相同）', '')
+
+        if not ave:
+            print('exception:', s)
+
+        pos = []
+        for host in hosts:
+            if s.find(host) > -1:
+                pos.append(s.find(host))
+
+        pos.sort()
+        try:
+            st = pos[0]
+        except:
+            print(item['episode'])
+            return s
+        res = []
+        for i, p in enumerate(pos[1:]):
+            res.append(s[st:p])
+            st = p
+        res.append(s[st:])
+
+        if not ave:
+            print('score', item['episode'])
+
+        scoring = '\n'.join(res) + '\n' + end + '\n\n'
+
+        return scoring + '平均分: ' + ave['score'] if ave else scoring
+    
+    def _format_outline(s):
+        s = s.split('；')
+        s = '; \n'.join(s)
+        s = s.replace('&lt;', '<')
+        s = s.replace('&gt;', '>')
+        s = s.replace('&amp;', '&')
+        s = re.sub(r'(下载完整节目)?(收听节目)?请点击(文末)?\"阅读原文\"按钮。', '', s)
+        s = s.replace('（以下广告，由微信平台自动插入，我们编辑文章时看不到内容，每位读者看到的也并不相同）', '')
+
+        return s
+    
+    def _format_list(l):
+        res = '本期片目\n\n'
+        for i, item in enumerate(l):
+            res += '『' + item['name'] + '』( ' + item['time'] + ' )\n'
+        return res
+    
+    res = []
+    for i, item in enumerate(data):
+        hosts = item['hosts']
+        scoring = _format_scoring(item['shownotes']['film_scoring'], hosts, item)
+        outline = _format_outline(item['shownotes']['film_outline'])
+        f_list = _format_list(item['shownotes']['film_list'])
+        summary = scoring + '\n\n' + outline + '\n\n' + f_list
+        tmp = {
+            'episode': item['episode'],
+            'title': item['title'],
+            'summary': summary
+        }
+        res.append(tmp)
+
+    with open('/Users/reyshawn/Desktop/summary.json', 'w+') as f:
+        json.dump(res, f, ensure_ascii=False)
+
+    
+
+if __name__ == "__main__":
+    with open('/Users/reyshawn/Desktop/summary.json', 'r') as f:
+       data = json.load(f)
+    
     # test_sort_items(data)
     # test_complete_dur(data, '/Users/reyshawn/Desktop/fanPie.rss')
     # JsonParser('/Users/reyshawn/Desktop/output.json', '/Users/reyshawn/Desktop/fanPie.rss')
-    pass
+    # test_parse_shownotes(data)
+
+    sect = data[20:100]
+    for i, item in enumerate(sect):
+        print(item['summary'])
