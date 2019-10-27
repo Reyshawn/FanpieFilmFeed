@@ -188,10 +188,10 @@ class JsonParser:
             return s
 
         def _format_list(l):
-            res = '本期片目\n\n'
+            res = '<h2>本期片目</h2>\n<ul>\n'
             for i, item in enumerate(l):
-                res += '『' + item['name'] + '』( ' + item['time'] + ' )\n'
-            return res
+                res += '<li>『' + item['name'] + '』( ' + item['time'] + ' )</li>\n'
+            return res + '</ul>\n'
 
         for i, item in enumerate(self._items):
             hosts = item['hosts']
@@ -199,7 +199,6 @@ class JsonParser:
             outline = _format_outline(item['shownotes']['film_outline'])
             f_list = _format_list(item['shownotes']['film_list'])
             summary = scoring + '\n\n' + outline + '\n\n' + f_list
-            summary = summary.replace('\n', '<br />')
             item['summary'] = summary
 
     def _build_items(self):
