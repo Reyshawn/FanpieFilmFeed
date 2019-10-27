@@ -240,7 +240,7 @@ class JsonParser:
 def format_time(s):
     t = datetime.strptime(s, '%Y-%m-%d')
     t = t.replace(hour=17)
-    return t.strftime("%Y-%m-%d %H:%M:%S %Z%z")
+    return t.strftime("%a, %d %B %Y %H:%M:%S +9000")
 
 
 if __name__ == "__main__":
