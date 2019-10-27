@@ -11,25 +11,28 @@ class FeedParser:
         self.itunes = builder.ElementMaker(namespace='http://www.itunes.com/dtds/podcast-1.0.dtd')
         self.json = json
 
-        self.build_rss()
+        self.build_feed()
         self.parse_items()
 
     def build_feed(self):
-        self.rss = self.E(
-            self._ele('title'),
-            self._ele('link'),
-            self._ele('pubDate'),
-            self._ele('generator'),
-            self._ele('language'),
-            self._ele('description'),
-            self._itunes_ele('author'),
-            self._itunes_ele('image'),
-            self.itunes.owner(
-                self._itunes_ele('name'),
-                self._itunes_ele('email')
-            ),
-            self._itunes_ele('type')
+        self.rss = self.E.rss(
+            self.E.channel(
+                self._ele('title'),
+                self._ele('link'),
+                self._ele('pubDate'),
+                self._ele('generator'),
+                self._ele('language'),
+                self._ele('description'),
+                self._itunes_ele('author'),
+                self._itunes_ele('image'),
+                self.itunes.owner(
+                    self._itunes_ele('name'),
+                    self._itunes_ele('email')
+                ),
+                self._itunes_ele('type')
+            )
         )
+
 
     def _ele(self, tag):
         return self.E(tag, self.json[tag])
@@ -38,8 +41,24 @@ class FeedParser:
         return self.itunes(tag, self.json[tag])
 
     def parse_items(self):
-        pass
+        channel = self.rss.xpath('//channel')[0]
+        for i, item in enumerate(self.json['items']):
+            episode = self.E.item(
+                self.E.title(item['title']),
+                self.E.link(item['link']),
+                self.E.pubDate(item['pubDate']),
+                self.E.guid(item['guid']),
+                self.E.description(item['description']),
+                self.itunes.episodeType('full'),
+                self.itunes.image(url=item['image']),
+                self.E.enclosure(url=item['enclosure'], type="audio/mpeg"),
+                self.itunes.duration(item['duration'])
+            )
+            channel.append(episode)
 
+    def save(self, path):
+        with open(path, 'wb+') as f:
+            f.write(etree.tostring(self.rss, xml_declaration=True, encoding='UTF-8'))
 
 class JsonParser:
     def __init__(self, path, other):
@@ -62,6 +81,7 @@ class JsonParser:
             'image': 'https://is5-ssl.mzstatic.com/image/thumb/Podcasts113/v4/ab/77/d9/ab77d99d-50aa-5d43-9a15-0327d4840f6a/mza_1413129501713462604.jpg/939x0w.jpg',
             'name': 'reyshawn',
             'email': 'reshawnchang@gamil.com',
+            'type': 'TV & Film',
             'items': new_items
         }
 
@@ -102,7 +122,6 @@ class JsonParser:
         self._items[incomp_dur['085']]['duration'] = '02:00:00'
         self._items[incomp_dur['065 sep: 1']]['duration'] = '00:58:00'
         self._items[incomp_dur['048 sep: 1']]['duration'] = '01:09:36'
-
 
     def _parse_shownotes(self):
         def _format_scoring(s, hosts):
@@ -185,22 +204,26 @@ class JsonParser:
             tmp = {}
             tmp['title'] = 'Episode ' + item['episode'] + ' | ' + item['title']
             tmp['link'] = item['url']
-            tmp['guid'] = ''
+            tmp['guid'] = 'fanpie_' + re.search(r'\/([\_\-a-zA-Z0-9]*)\.mp3', item['url'])[1]
             tmp['pubDate'] = item['pub_date']
             tmp['author'] = ', '.join(item['hosts'])
             tmp['enclosure'] = item['url']
             tmp['duration'] = item['duration']
+            tmp['image'] = 'https://is5-ssl.mzstatic.com/image/thumb/Podcasts113/v4/ab/77/d9/ab77d99d-50aa-5d43-9a15-0327d4840f6a/mza_1413129501713462604.jpg/939x0w.jpg'
             tmp['description']= item['summary']
             res.append(tmp)
         return res
 
-    
-    
-    def save_file(self, path):
+    def save(self, path):
         with open(path, 'w+') as f:
             json.dump(self._feed, f, ensure_ascii=False)
+
+    def feed(self):
+        return self._feed
 
 
 if __name__ == "__main__":
     a = JsonParser('/Users/reyshawn/Desktop/FanpieFilm/fanPie/output.json', '/Users/reyshawn/Desktop/fanPie.rss')
-    a.save_file('/Users/reyshawn/Desktop/json_parser.json')
+    feed = a.feed()
+    xml = FeedParser(feed)
+    xml.save('/Users/reyshawn/Desktop/1234.xml')
