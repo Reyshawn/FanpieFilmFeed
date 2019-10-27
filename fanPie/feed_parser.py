@@ -190,8 +190,8 @@ class JsonParser:
                 s.pop()
             s = ['<p>' + i + ';</p>' for i in s]
             s = '\n'.join(s)
-            s = s.replace('&lt;', '<')
-            s = s.replace('&gt;', '>')
+            # s = s.replace('&lt;', '<')
+            # s = s.replace('&gt;', '>')
             s = s.replace('&amp;', '&')
             s = re.sub(r'(下载完整节目)?(收听节目)?请点击(文末)?\"阅读原文\"按钮。', '', s)
             s = s.replace('（以下广告，由微信平台自动插入，我们编辑文章时看不到内容，每位读者看到的也并不相同）', '')
