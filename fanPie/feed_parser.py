@@ -1,6 +1,7 @@
 import json
 from lxml import etree, builder
 import re
+import os
 
 class FeedParser:
     def __init__(self, json):
@@ -48,7 +49,7 @@ class FeedParser:
                 self.E.link(item['link']),
                 self.E.pubDate(item['pubDate']),
                 self.E.guid(item['guid']),
-                self.E.description(item['description']),
+                self.E.description(etree.CDATA(item['description'])),
                 self.itunes.episodeType('full'),
                 self.itunes.image(url=item['image']),
                 self.E.enclosure(url=item['enclosure'], type="audio/mpeg"),
@@ -62,6 +63,8 @@ class FeedParser:
 
 class JsonParser:
     def __init__(self, path, other):
+        if not os.path.isabs(path):
+            path = os.path.join(os.path.dirname(__file__), path)
         with open(path)  as f:
             self._items = json.load(f)
 
@@ -78,7 +81,7 @@ class JsonParser:
             'language': 'zh-cn',
             'description': '若批评不自由，则赞美无意义。党同伐异，猛于炮火。',
             'author': '波米和他的朋友们',
-            'image': 'https://is5-ssl.mzstatic.com/image/thumb/Podcasts113/v4/ab/77/d9/ab77d99d-50aa-5d43-9a15-0327d4840f6a/mza_1413129501713462604.jpg/939x0w.jpg',
+            'image': 'https://raw.githubusercontent.com/Reyshawn/FanpieFilmFeed/master/fanPie/assets/939x0w.jpg',
             'name': 'reyshawn',
             'email': 'reshawnchang@gamil.com',
             'type': 'TV & Film',
@@ -196,6 +199,7 @@ class JsonParser:
             outline = _format_outline(item['shownotes']['film_outline'])
             f_list = _format_list(item['shownotes']['film_list'])
             summary = scoring + '\n\n' + outline + '\n\n' + f_list
+            summary.replace('\n', '<br />')
             item['summary'] = summary
 
     def _build_items(self):
@@ -209,7 +213,7 @@ class JsonParser:
             tmp['author'] = ', '.join(item['hosts'])
             tmp['enclosure'] = item['url']
             tmp['duration'] = item['duration']
-            tmp['image'] = 'https://is5-ssl.mzstatic.com/image/thumb/Podcasts113/v4/ab/77/d9/ab77d99d-50aa-5d43-9a15-0327d4840f6a/mza_1413129501713462604.jpg/939x0w.jpg'
+            tmp['image'] = 'https://raw.githubusercontent.com/Reyshawn/FanpieFilmFeed/master/fanPie/assets/939x0w.jpg'
             tmp['description']= item['summary']
             res.append(tmp)
         return res
@@ -223,7 +227,7 @@ class JsonParser:
 
 
 if __name__ == "__main__":
-    a = JsonParser('/Users/reyshawn/Desktop/FanpieFilm/fanPie/output.json', '/Users/reyshawn/Desktop/fanPie.rss')
+    a = JsonParser('output.json', '/Users/reyshawn/Desktop/fanPie_ximalaya.rss')
     feed = a.feed()
     xml = FeedParser(feed)
-    xml.save('/Users/reyshawn/Desktop/1234.xml')
+    xml.save('fanPieFilm.rss')
