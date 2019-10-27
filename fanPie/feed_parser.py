@@ -7,9 +7,11 @@ class FeedParser:
     def __init__(self, json):
         self.E = builder.ElementMaker(nsmap={
             'atom':'http://www.w3.org/2005/Atom',
-            'itunes': "http://www.itunes.com/dtds/podcast-1.0.dtd"   
+            'itunes': 'http://www.itunes.com/dtds/podcast-1.0.dtd',
+            'content': 'http://purl.org/rss/1.0/modules/content/'
         })
         self.itunes = builder.ElementMaker(namespace='http://www.itunes.com/dtds/podcast-1.0.dtd')
+        self.content = builder.ElementMaker(namespace='http://purl.org/rss/1.0/modules/content/')
         self.json = json
 
         self.build_feed()
@@ -49,11 +51,13 @@ class FeedParser:
                 self.E.link(item['link']),
                 self.E.pubDate(item['pubDate']),
                 self.E.guid(item['guid']),
-                self.E.description(etree.CDATA(item['description'])),
+                
                 self.itunes.episodeType('full'),
                 self.itunes.image(url=item['image']),
                 self.E.enclosure(url=item['enclosure'], type="audio/mpeg"),
-                self.itunes.duration(item['duration'])
+                self.itunes.duration(item['duration']),
+                self.E.description(item['description']),
+                self.content.encoded(etree.CDATA(item['description']))
             )
             channel.append(episode)
 
