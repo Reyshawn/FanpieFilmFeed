@@ -60,6 +60,17 @@ class filmSpider(scrapy.Spider):
         url = url[0] if url else '❌'
         l.add_value('url', url)
 
+        d_1 = re.search(r'(?:(节目)?总?时长：)(?P<t>[0-9]{2}:[0-9]{2}:[0-9]{2})', shownotes['shownotes_original'])
+        d_2 = re.search(r'(?:(节目)?总?时长：)约?(?P<h>[0-9]{1,2})小?时(?P<m>[0-9]{1,2})?分?', shownotes['shownotes_original'])
+        if d_1:
+            duration = d_1['t']
+        elif d_2:
+            m = '0'+ d_2['m'] if d_2['m'] and len(d_2['m']) == 1 else d_2['m']
+            duration = d_2['h'] + ':' + m + ':00' if d_2['m'] else d_2['h'] + ':00:00'
+        else:
+            duration = '❌'
+        l.add_value('duration', duration)
+
         pub_date = re.search(r'[a-z]="([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))";', response.text)
         pub_date = pub_date[1] if pub_date else '❌'
         l.add_value('pub_date', pub_date)

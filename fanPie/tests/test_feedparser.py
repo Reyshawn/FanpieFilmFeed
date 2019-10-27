@@ -1,5 +1,6 @@
 import json
 from lxml import etree, builder
+import re
 
 class FeedParser:
     def __init__(self, json):
@@ -43,9 +44,9 @@ class FeedParser:
 class JsonParser:
     def __init__(self, path):
         with open(path)  as f:
-            self.items = json.load(f)
+            self._items = json.load(f)
 
-        self._sort_items(self.items)
+        self._sort_items()
 
         self._header = {
             'title': '反派影评',
@@ -65,13 +66,13 @@ class JsonParser:
         self._feed = None
 
     # sort items by episode number
-    def _sort_items(self, items):
+    def _sort_items(self):
         def cmp(i):
             return int(i['episode'][:3]), len(i['episode']), int(i['episode'][-1:])
 
-        items.sort(key=cmp, reverse=True)
+        self._items.sort(key=cmp, reverse=True)
     
-    # complete items by other rss file, mainly url
+    # complete items by other rss file, mainly url, duration, image
     def _complete_items(self, path):
         pass
 
@@ -137,21 +138,60 @@ def test_build_xml():
     test_write_xml(rss)
 
 
-def test_sort_items(json):
-    sect = json[:]
-    print(sect[0]['episode'])
+def test_sort_items(data):
     def cmp(i):
         return int(i['episode'][:3]), len(i['episode']), int(i['episode'][-1:])
 
-    sect.sort(key=cmp, reverse=True)
-    for i in sect:
-        print(i['episode'])
+    data.sort(key=cmp, reverse=True)
 
 
-def test_complete_items(json):
-    pass
+def test_complete_items(data, path):
+    incomp = {}
+    for i, item in enumerate(data):
+        if item['url'] == '❌':
+            incomp[item['episode']] = i
+            print(item['episode'])
+
+    root = etree.parse(path)
+    items = root.xpath('//item')
+
+    for i in items:
+        title = i.find('title').text
+        if title[:3] in incomp.keys():
+            url = i.find('enclosure').attrib['url']
+            num = incomp[title[:3]]
+            data[num]['url'] = url
+
+    with open('/Users/reyshawn/Desktop/allurl.json', 'w+') as f:
+        json.dump(data, f, ensure_ascii=False)
+
+
+def test_get_duration(data, path):
+    sect = data[:]
+    for i, item in enumerate(sect):
+        t = re.search(r'(?:(节目)?总?时长：)(?P<t>[0-9]{2}:[0-9]{2}:[0-9]{2})', item['shownotes']['shownotes_original'])
+        l = re.search(r'(?:(节目)?总?时长：)约?(?P<h>[0-9]{1,2})小?时(?P<m>[0-9]{1,2})?分?', item['shownotes']['shownotes_original'])
+        if t:
+            print(':  ', t['t'])
+            print('episode: ', item['episode'])
+        elif l:
+            m = '0'+ l['m'] if l['m'] and len(l['m']) == 1 else l['m']
+            x = l['h'] + ':' + m + ':00' if l['m'] else l['h'] + ':00:00'
+            print(':  ', x)
+            print('episode: ', item['episode'])
+        
+            
+
+        
+        
 
 
 if __name__ == "__main__":
-    # test_build_xml()    
-    pass
+    with open('/Users/reyshawn/Desktop/output.json', 'r') as f:
+        data = json.load(f)
+
+    test_sort_items(data)
+    for i, item in enumerate(data):
+        if item['duration'] == '❌':
+            print(item['episode'])
+    
