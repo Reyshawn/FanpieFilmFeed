@@ -2,119 +2,6 @@ import json
 from lxml import etree, builder
 import re
 
-class FeedParser:
-    def __init__(self, json):
-        self.E = builder.ElementMaker(nsmap={
-            'atom':'http://www.w3.org/2005/Atom',
-            'itunes': "http://www.itunes.com/dtds/podcast-1.0.dtd"   
-        })
-        self.itunes = builder.ElementMaker(namespace='http://www.itunes.com/dtds/podcast-1.0.dtd')
-        self.json = json
-
-        self.build_rss()
-        self.parse_items()
-
-    def build_feed(self):
-        self.rss = self.E(
-            self._ele('title'),
-            self._ele('link'),
-            self._ele('pubDate'),
-            self._ele('generator'),
-            self._ele('language'),
-            self._ele('description'),
-            self._itunes_ele('author'),
-            self._itunes_ele('image'),
-            self.itunes.owner(
-                self._itunes_ele('name'),
-                self._itunes_ele('email')
-            ),
-            self._itunes_ele('type')
-        )
-
-    def _ele(self, tag):
-        return self.E(tag, self.json[tag])
-    
-    def _itunes_ele(self, tag):
-        return self.itunes(tag, self.json[tag])
-
-    def parse_items(self):
-        pass
-
-
-class JsonParser:
-    def __init__(self, path, other):
-        with open(path)  as f:
-            self._items = json.load(f)
-
-        self._sort_items()
-        self._complete_items(other)
-
-        self._header = {
-            'title': '反派影评',
-            'link': 'https://fanpaiyingping.com',
-            'pubDate': self._items[-1]['pub_date'],
-            'generator': 'python',
-            'language': 'zh-cn',
-            'description': '若批评不自由，则赞美无意义。党同伐异，猛于炮火。',
-            'author': '波米和他的朋友们',
-            'image': 'https://is5-ssl.mzstatic.com/image/thumb/Podcasts113/v4/ab/77/d9/ab77d99d-50aa-5d43-9a15-0327d4840f6a/mza_1413129501713462604.jpg/939x0w.jpg',
-            'name': 'reyshawn',
-            'email': 'reshawnchang@gamil.com'
-        }
-
-
-
-        self._feed = None
-
-    # sort items by episode number
-    def _sort_items(self):
-        def cmp(i):
-            return int(i['episode'][:3]), len(i['episode']), int(i['episode'][-1:])
-
-        self._items.sort(key=cmp, reverse=True)
-    
-    # complete items by other rss file, mainly url, duration, image
-    def _complete_items(self, path):
-        incomp_url = {}
-        incomp_dur = {}
-        for i, item in enumerate(self._items):
-            if item['url'] == '❌':
-                incomp_url[item['episode']] = i
-
-            if item['duration'] == '❌':
-                incomp_dur[item['episode']] = i
-        
-        root = etree.parse(path)
-        items = root.xpath('//item')
-
-        for i in items:
-            title = i.find('title').text
-            if title[:3] in incomp_url.keys():
-                url = i.find('enclosure').attrib['url']
-                num = incomp_url[title[:3]]
-                self._items[num]['url'] = url
-            
-            if title[:3] in incomp_dur.keys():
-                dur = i.find('itunes:duration', namespaces=i.nsmap).text
-                num = incomp_dur[title[:3]]
-                self._items[num]['duration'] = dur
-
-        self._items[incomp_dur['131 sep: 1']]['duration'] = '00:55:30'
-        self._items[incomp_dur['085']]['duration'] = '02:00:00'
-        self._items[incomp_dur['065 sep: 1']]['duration'] = '00:58:00'
-        self._items[incomp_dur['048 sep: 1']]['duration'] = '01:09:36'
-
-
-    def _parse_shownotes(self):
-        pass
-
-    def save_file(self, path):
-        with open(path, 'w+') as f:
-            json.dump(self._feed, f, ensure_ascii=False)
-
-
-
-
 def test_write_xml(output):
     with open('/Users/reyshawn/Desktop/rss.xml', 'wb+') as f:
         f.write(etree.tostring(output, xml_declaration=True, encoding='UTF-8'))
@@ -334,14 +221,10 @@ def test_parse_shownotes(data):
     
 
 if __name__ == "__main__":
-    with open('/Users/reyshawn/Desktop/summary.json', 'r') as f:
-       data = json.load(f)
+    #with open('/Users/reyshawn/Desktop/c.json', 'r') as f:
+    #   data = json.load(f)
     
     # test_sort_items(data)
     # test_complete_dur(data, '/Users/reyshawn/Desktop/fanPie.rss')
-    # JsonParser('/Users/reyshawn/Desktop/output.json', '/Users/reyshawn/Desktop/fanPie.rss')
     # test_parse_shownotes(data)
 
-    sect = data[20:100]
-    for i, item in enumerate(sect):
-        print(item['summary'])
