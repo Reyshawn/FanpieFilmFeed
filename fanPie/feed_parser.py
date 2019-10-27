@@ -1,7 +1,9 @@
 import json
-from lxml import etree, builder
 import re
 import os
+
+from lxml import etree, builder
+from datetime import datetime
 
 class FeedParser:
     def __init__(self, json):
@@ -81,7 +83,7 @@ class JsonParser:
         self._feed = {
             'title': '反派影评',
             'link': 'https://fanpaiyingping.com',
-            'pubDate': self._items[-1]['pub_date'],
+            'pubDate': format_time(self._items[-1]['pub_date']),
             'generator': 'python',
             'language': 'zh-cn',
             'description': '若批评不自由，则赞美无意义。党同伐异，猛于炮火。',
@@ -218,7 +220,7 @@ class JsonParser:
             tmp['title'] = 'Episode ' + item['episode'] + ' | ' + item['title']
             tmp['link'] = item['url']
             tmp['guid'] = 'fanpie_' + re.search(r'\/([\_\-a-zA-Z0-9]*)\.mp3', item['url'])[1]
-            tmp['pubDate'] = item['pub_date']
+            tmp['pubDate'] = format_time(item['pub_date'])
             tmp['author'] = ', '.join(item['hosts'])
             tmp['enclosure'] = item['url']
             tmp['duration'] = item['duration']
@@ -233,6 +235,12 @@ class JsonParser:
 
     def feed(self):
         return self._feed
+
+
+def format_time(s):
+    t = datetime.strptime(s, '%Y-%m-%d')
+    t = t.replace(hour=17)
+    return t.strftime("%Y-%m-%d %H:%M:%S %Z%z")
 
 
 if __name__ == "__main__":

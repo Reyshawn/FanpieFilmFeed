@@ -29,9 +29,16 @@ class filmSpider(scrapy.Spider):
                 hosts = hosts_strip[1].split('、') if hosts_strip else ['波米']
 
                 print('title:', title)
-                if i.css('a') or num == '111':
+                if num == '111':
+                    url = 'https://mp.weixin.qq.com/s/_phqvDLLqsI_4uJ7gSDoQw'
+                    request = scrapy.Request(url, self.parse_article)
+                    request.meta['episode'] = num
+                    request.meta['film'] = film
+                    request.meta['hosts'] = hosts
+                    yield request
+                elif i.css('a'):
                     for j in range(len(i.css('a'))):
-                        url = i.css('a')[j].attrib['href'] if i.css('a') else 'https://mp.weixin.qq.com/s/_phqvDLLqsI_4uJ7gSDoQw' # 三和人才市场
+                        url = i.css('a')[j].attrib['href']
                         request = scrapy.Request(url, self.parse_article)
                         request.meta['episode'] = num if j == 0 else num + ' sep: ' + str(j)
                         request.meta['film'] = film
