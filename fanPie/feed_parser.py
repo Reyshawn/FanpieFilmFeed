@@ -140,7 +140,7 @@ class JsonParser:
                 return s
             end_s = re.search(r'[(|（]?音频后期制作', s)
             if end_s:
-                end = s[end_s.span()[0]:]
+                end = '<p>' + s[end_s.span()[0]:] + '</p>'
                 s = s[:end_s.span()[0]]
             else:
                 end = ''
@@ -176,13 +176,17 @@ class JsonParser:
                 res.append(s[st:p])
                 st = p
             res.append(s[st:])
+            res = ['<p>' + i + '</p>' for i in res]
 
             scoring = '\n'.join(res) + '\n' + end + '\n\n'
-            return scoring + '平均分: ' + ave['score'] if ave else scoring
+            return scoring + '<p>平均分: ' + ave['score'] + '</p>' if ave else scoring
 
         def _format_outline(s):
             s = s.split('；')
-            s = '; \n'.join(s)
+            if s[-1] == '':
+                s.pop()
+            s = ['<p>' + i + ';</p>' for i in s]
+            s = '\n'.join(s)
             s = s.replace('&lt;', '<')
             s = s.replace('&gt;', '>')
             s = s.replace('&amp;', '&')
