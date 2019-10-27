@@ -49,8 +49,9 @@ class JsonParser:
         self._sort_items()
         self._complete_items(other)
         self._parse_shownotes()
+        new_items = self._build_items()
 
-        self._header = {
+        self._feed = {
             'title': '反派影评',
             'link': 'https://fanpaiyingping.com',
             'pubDate': self._items[-1]['pub_date'],
@@ -60,11 +61,9 @@ class JsonParser:
             'author': '波米和他的朋友们',
             'image': 'https://is5-ssl.mzstatic.com/image/thumb/Podcasts113/v4/ab/77/d9/ab77d99d-50aa-5d43-9a15-0327d4840f6a/mza_1413129501713462604.jpg/939x0w.jpg',
             'name': 'reyshawn',
-            'email': 'reshawnchang@gamil.com'
+            'email': 'reshawnchang@gamil.com',
+            'items': new_items
         }
-
-
-        self._feed = None
 
     # sort items by episode number
     def _sort_items(self):
@@ -180,10 +179,28 @@ class JsonParser:
             summary = scoring + '\n\n' + outline + '\n\n' + f_list
             item['summary'] = summary
 
+    def _build_items(self):
+        res = []
+        for i, item in enumerate(self._items):
+            tmp = {}
+            tmp['title'] = 'Episode ' + item['episode'] + ' | ' + item['title']
+            tmp['link'] = item['url']
+            tmp['guid'] = ''
+            tmp['pubDate'] = item['pub_date']
+            tmp['author'] = ', '.join(item['hosts'])
+            tmp['enclosure'] = item['url']
+            tmp['duration'] = item['duration']
+            tmp['description']= item['summary']
+            res.append(tmp)
+        return res
+
+    
+    
     def save_file(self, path):
         with open(path, 'w+') as f:
             json.dump(self._feed, f, ensure_ascii=False)
 
 
 if __name__ == "__main__":
-    JsonParser('/Users/reyshawn/Desktop/output.json', '/Users/reyshawn/Desktop/fanPie.rss')
+    a = JsonParser('/Users/reyshawn/Desktop/FanpieFilm/fanPie/output.json', '/Users/reyshawn/Desktop/fanPie.rss')
+    a.save_file('/Users/reyshawn/Desktop/json_parser.json')
