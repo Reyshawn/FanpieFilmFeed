@@ -244,7 +244,7 @@ def format_time(s):
 
 
 if __name__ == "__main__":
-    a = JsonParser('output.json', '/Users/reyshawn/Desktop/fanPie_ximalaya.rss')
+    a = JsonParser('output.json', 'helper.rss')
     feed = a.feed()
     xml = FeedParser(feed)
     xml.save('fanPieFilm.rss')
