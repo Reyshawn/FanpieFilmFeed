@@ -66,7 +66,7 @@ class filmSpider(scrapy.Spider):
             duration = d_1['t']
         elif d_2:
             m = '0'+ d_2['m'] if d_2['m'] and len(d_2['m']) == 1 else d_2['m']
-            duration = d_2['h'] + ':' + m + ':00' if d_2['m'] else d_2['h'] + ':00:00'
+            duration = '0' + d_2['h'] + ':' + m + ':00' if d_2['m'] else '0' + d_2['h'] + ':00:00'
         else:
             duration = '❌'
         l.add_value('duration', duration)

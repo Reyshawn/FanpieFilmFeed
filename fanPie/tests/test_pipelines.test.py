@@ -1,6 +1,5 @@
 import json
 import re
-from utils import ORIGINAL_PATH, load_data
 
 # re = r'《([^》]*)》[ ]*?[(|（]?[^()（）]*?([0-9]{4})[)|）]?'
 ORIGINAL_PATH = '/Users/reyshawn/Desktop/FanpieFilm/fanPie/output.json'
@@ -87,6 +86,5 @@ def test_data(path):
     #     json.dump(res, f, ensure_ascii=False)
 
 if __name__ == "__main__":
-    # load_data(ORIGINAL_PATH, OUTPUT_PATH)
+    load_data(ORIGINAL_PATH, OUTPUT_PATH)
     # test_data(OUTPUT_PATH)
-    pass

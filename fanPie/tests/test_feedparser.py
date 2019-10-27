@@ -42,16 +42,17 @@ class FeedParser:
 
 
 class JsonParser:
-    def __init__(self, path):
+    def __init__(self, path, other):
         with open(path)  as f:
             self._items = json.load(f)
 
         self._sort_items()
+        self._complete_items(other)
 
         self._header = {
             'title': '反派影评',
             'link': 'https://fanpaiyingping.com',
-            'pubDate': self.items[-1]['pub_date'],
+            'pubDate': self._items[-1]['pub_date'],
             'generator': 'python',
             'language': 'zh-cn',
             'description': '若批评不自由，则赞美无意义。党同伐异，猛于炮火。',
@@ -60,8 +61,6 @@ class JsonParser:
             'name': 'reyshawn',
             'email': 'reshawnchang@gamil.com'
         }
-
-
 
         self._feed = None
 
@@ -74,7 +73,35 @@ class JsonParser:
     
     # complete items by other rss file, mainly url, duration, image
     def _complete_items(self, path):
-        pass
+        incomp_url = {}
+        incomp_dur = {}
+        for i, item in enumerate(self._items):
+            if item['url'] == '❌':
+                incomp_url[item['episode']] = i
+
+            if item['duration'] == '❌':
+                incomp_dur[item['episode']] = i
+        
+        root = etree.parse(path)
+        items = root.xpath('//item')
+
+        for i in items:
+            title = i.find('title').text
+            if title[:3] in incomp_url.keys():
+                url = i.find('enclosure').attrib['url']
+                num = incomp_url[title[:3]]
+                self._items[num]['url'] = url
+            
+            if title[:3] in incomp_dur.keys():
+                dur = i.find('itunes:duration', namespaces=i.nsmap).text
+                num = incomp_dur[title[:3]]
+                self._items[num]['duration'] = dur
+
+        self._items[incomp_dur['131 sep: 1']]['duration'] = '00:55:30'
+        self._items[incomp_dur['085']]['duration'] = '02:00:00'
+        self._items[incomp_dur['065 sep: 1']]['duration'] = '00:58:00'
+        self._items[incomp_dur['048 sep: 1']]['duration'] = '01:09:36'
+
 
     def _parse_shownotes(self):
         pass
@@ -145,6 +172,7 @@ def test_sort_items(data):
     data.sort(key=cmp, reverse=True)
 
 
+# complete url and duration field
 def test_complete_items(data, path):
     incomp = {}
     for i, item in enumerate(data):
@@ -165,6 +193,37 @@ def test_complete_items(data, path):
     with open('/Users/reyshawn/Desktop/allurl.json', 'w+') as f:
         json.dump(data, f, ensure_ascii=False)
 
+def test_complete_dur(data, path):
+    incomp = {}
+    for i, item in enumerate(data):
+        if item['duration'] == '❌':
+            incomp[item['episode']] = i
+            print(item['episode'])
+    
+    root = etree.parse(path)
+    items = root.xpath('//item')
+
+    for i in items:
+        title = i.find('title').text
+        if title[:3] in incomp.keys():
+            dur = i.find('itunes:duration', namespaces=i.nsmap).text
+            num = incomp[title[:3]]
+            data[num]['duration'] = dur
+
+    data[incomp['131 sep: 1']]['duration'] = '00:55:30'
+    data[incomp['085']]['duration'] = '2:00:00'
+    data[incomp['065 sep: 1']]['duration'] = '00:58:00'
+    data[incomp['048 sep: 1']]['duration'] = '01:09:36'
+
+
+
+    print('------------------------------')
+    for i, item in enumerate(data):
+        if item['duration'] == '❌':
+            incomp[item['episode']] = i
+            print(item['episode'])
+    
+
 
 def test_get_duration(data, path):
     sect = data[:]
@@ -179,19 +238,13 @@ def test_get_duration(data, path):
             x = l['h'] + ':' + m + ':00' if l['m'] else l['h'] + ':00:00'
             print(':  ', x)
             print('episode: ', item['episode'])
-        
-            
-
-        
-        
 
 
 if __name__ == "__main__":
-    with open('/Users/reyshawn/Desktop/output.json', 'r') as f:
-        data = json.load(f)
+    # with open('/Users/reyshawn/Desktop/output.json', 'r') as f:
+    #     data = json.load(f)
 
-    test_sort_items(data)
-    for i, item in enumerate(data):
-        if item['duration'] == '❌':
-            print(item['episode'])
-    
+    # test_sort_items(data)
+    # test_complete_dur(data, '/Users/reyshawn/Desktop/fanPie.rss')
+    # JsonParser('/Users/reyshawn/Desktop/output.json', '/Users/reyshawn/Desktop/fanPie.rss')
+    pass
