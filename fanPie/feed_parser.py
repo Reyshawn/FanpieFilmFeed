@@ -27,7 +27,7 @@ class FeedParser:
                 self._ele('language'),
                 self._ele('description'),
                 self._itunes_ele('author'),
-                self._itunes_ele('image'),
+                self.itunes.image(href=self.json['image']),
                 self.itunes.owner(
                     self._itunes_ele('name'),
                     self._itunes_ele('email')
@@ -53,7 +53,7 @@ class FeedParser:
                 self.E.guid(item['guid']),
                 
                 self.itunes.episodeType('full'),
-                self.itunes.image(url=item['image']),
+                self.itunes.image(href=item['image']),
                 self.E.enclosure(url=item['enclosure'], type="audio/mpeg"),
                 self.itunes.duration(item['duration']),
                 self.E.description(item['description']),
@@ -207,6 +207,7 @@ class JsonParser:
             outline = _format_outline(item['shownotes']['film_outline'])
             f_list = _format_list(item['shownotes']['film_list'])
             summary = scoring + '\n\n' + outline + '\n\n' + f_list
+            summary = summary.replace('❌', '🎬')
             item['summary'] = summary
 
     def _build_items(self):
