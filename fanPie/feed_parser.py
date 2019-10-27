@@ -28,9 +28,10 @@ class FeedParser:
                 self._ele('description'),
                 self._itunes_ele('author'),
                 self.itunes.image(href=self.json['image']),
-                self.itunes.owner(
-                    self._itunes_ele('name'),
-                    self._itunes_ele('email')
+                self.E.webMaster(self.json['email']),
+                self.E.ttl('60'),
+                self.E.image(
+                    self.E.url(self.json['image'])
                 ),
                 self._itunes_ele('type')
             )

@@ -11,10 +11,11 @@
         <itunes:author>波米和他的朋友们</itunes:author>
         <itunes:image
             href="https://raw.githubusercontent.com/Reyshawn/FanpieFilmFeed/master/fanPie/assets/939x0w.jpg" />
-        <itunes:owner>
-            <itunes:name>reyshawn</itunes:name>
-            <itunes:email>reshawnchang@gamil.com</itunes:email>
-        </itunes:owner>
+        <webMaster>reshawnchang@gamil.com</webMaster>
+        <ttl>60</ttl>
+        <image>
+            <url>https://raw.githubusercontent.com/Reyshawn/FanpieFilmFeed/master/fanPie/assets/939x0w.jpg</url>
+        </image>
         <itunes:type>TV &amp; Film</itunes:type>
         <item>
             <title>Episode 174 sep: 1 | 关于李安，一位画家和我争论了起来……</title>
