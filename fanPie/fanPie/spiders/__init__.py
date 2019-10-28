@@ -44,7 +44,7 @@ class filmSpider(scrapy.Spider):
                     for j in range(len(i.css('a'))):
                         url = i.css('a')[j].attrib['href']
                         request = scrapy.Request(url, self.parse_article)
-                        request.meta['episode'] = num if j == 0 else num + ' sep: ' + str(j)
+                        request.meta['episode'] = num if j == 0 else num + ' § ' + str(j)
                         request.meta['film'] = film
                         request.meta['hosts'] = hosts
                         yield request

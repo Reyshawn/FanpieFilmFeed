@@ -133,10 +133,10 @@ class JsonParser:
                 num = incomp_dur[title[:3]]
                 self._items[num]['duration'] = dur
 
-        self._items[incomp_dur['131 sep: 1']]['duration'] = '00:55:30'
+        self._items[incomp_dur['131 § 1']]['duration'] = '00:55:30'
         self._items[incomp_dur['085']]['duration'] = '02:00:00'
-        self._items[incomp_dur['065 sep: 1']]['duration'] = '00:58:00'
-        self._items[incomp_dur['048 sep: 1']]['duration'] = '01:09:36'
+        self._items[incomp_dur['065 § 1']]['duration'] = '00:58:00'
+        self._items[incomp_dur['048 § 1']]['duration'] = '01:09:36'
 
     def _parse_shownotes(self):
         def _format_subtitle(s, episode):
@@ -145,7 +145,7 @@ class JsonParser:
                 if len(episode) == 3:
                     s = ss[0]
                 else:
-                    s = ss[int(episode[-1])] if episode != '139 sep: 2' else ss[1]
+                    s = ss[int(episode[-1])] if episode != '139 § 2' else ss[1]
 
             if not re.search(r'((外延)|(前作)|(回顾)|(盘点)|(电影节))', s):
                 s = '『' + s + '』' 
