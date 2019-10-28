@@ -188,7 +188,7 @@ class JsonParser:
             s = s.split('；')
             if s[-1] == '':
                 s.pop()
-            s = ['<p>' + i + ';</p>' for i in s]
+            s = ['<p>' + i + '</p>' for i in s]
             s = '\n'.join(s)
             # s = s.replace('&lt;', '<')
             # s = s.replace('&gt;', '>')
