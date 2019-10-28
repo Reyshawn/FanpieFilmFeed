@@ -5,6 +5,11 @@ import os
 from lxml import etree, builder
 from datetime import datetime
 
+censored = {
+    '“韩国老司机”': '逆權司機',
+    '一九八七': '1987：黎明到來的那一天'
+}
+
 class FeedParser:
     def __init__(self, json):
         self.E = builder.ElementMaker(nsmap={
@@ -211,7 +216,11 @@ class JsonParser:
 
         for i, item in enumerate(self._items):
             hosts = item['hosts']
-            film = '<h1>『' + item['film'] + '』</h1>\n\n'
+            if item['film'] in censored.keys():
+                uncen_film = censored[item['film']]
+            else:
+                uncen_film = item['film']
+            film = '<h1>『' + uncen_film + '』</h1>\n\n'
             scoring = _format_scoring(item['shownotes']['film_scoring'], hosts)
             outline = _format_outline(item['shownotes']['film_outline'])
             f_list = _format_list(item['shownotes']['film_list'])
@@ -221,9 +230,24 @@ class JsonParser:
 
     def _build_items(self):
         res = []
+        def _format_title(s):
+            filters = [
+                '【反派影评】',
+                '【反派影评文字版】',
+                '【节目】',
+                r'(\||｜) ?长?节目(重发)?'
+
+            ]
+
+            for f in filters:
+                if re.search(f, s):
+                    s = re.sub(f, '', s)
+                    s = s.strip()
+            return s
+
         for i, item in enumerate(self._items):
             tmp = {}
-            tmp['title'] = 'Episode ' + item['episode'] + ' | ' + item['title']
+            tmp['title'] = 'Episode ' + item['episode'] + ' | ' + _format_title(item['title'])
             tmp['link'] = item['url']
             tmp['guid'] = 'fanpie_' + re.search(r'\/([\_\-a-zA-Z0-9]*)\.mp3', item['url'])[1]
             tmp['pubDate'] = format_time(item['pub_date'])
