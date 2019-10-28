@@ -11,7 +11,7 @@ import re
 index = 0
 
 class filmSpider(scrapy.Spider):
-    name = "film"
+    name = "all_episodes"
     start_urls = [
         'https://mp.weixin.qq.com/s/V6LfeY6Mki8VDyFYyfud2Q'
     ]
@@ -22,11 +22,15 @@ class filmSpider(scrapy.Spider):
             title = re.sub(r'<[^>]*>', '', i.get()).strip()
             if title:
                 num = title[:3]
-                sep = title.find('（')
-                film = title[4:sep].strip()
+                hosts_list = re.findall(r'（[^：]*?(?:嘉宾：?)([^）]*)）', title)
+                film = re.sub(r'（[^：]*?(?:嘉宾：?)([^）]*)）', '', title[3:]).strip()
 
-                hosts_strip = re.search(r'(?:嘉宾：)([^）]*)', title[sep:])
-                hosts = hosts_strip[1].split('、') if hosts_strip else ['波米']
+                hosts = []
+                for host in hosts_list:
+                    if '、' in host:
+                        hosts += host.split('、')
+                    else:
+                        hosts.append(host)
 
                 print('title:', title)
                 if num == '111':

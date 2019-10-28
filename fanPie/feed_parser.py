@@ -139,6 +139,20 @@ class JsonParser:
         self._items[incomp_dur['048 sep: 1']]['duration'] = '01:09:36'
 
     def _parse_shownotes(self):
+        def _format_subtitle(s, episode):
+            if '&amp;' in s or '及' in s:
+                ss = s.split('&amp;') if '&amp;' in s else s.split('及')
+                if len(episode) == 3:
+                    s = ss[0]
+                else:
+                    s = ss[int(episode[-1])] if episode != '139 sep: 2' else ss[1]
+
+            if not re.search(r'((外延)|(前作)|(回顾)|(盘点)|(电影节))', s):
+                s = '『' + s + '』' 
+            
+            return '<h1>' + s + '</h1>\n\n'
+
+
         def _format_scoring(s, hosts):
             patterns = [
                 r'(《[^》]*?》([\(|（][^\)]*?[\)|）])?)(综合)?(平均)?总?分数?[：|:]约?(?P<score>[0-9\.]*)分?',
@@ -216,11 +230,7 @@ class JsonParser:
 
         for i, item in enumerate(self._items):
             hosts = item['hosts']
-            if item['film'] in censored.keys():
-                uncen_film = censored[item['film']]
-            else:
-                uncen_film = item['film']
-            film = '<h1>『' + uncen_film + '』</h1>\n\n'
+            film = _format_subtitle(item['film'], item['episode'])
             scoring = _format_scoring(item['shownotes']['film_scoring'], hosts)
             outline = _format_outline(item['shownotes']['film_outline'])
             f_list = _format_list(item['shownotes']['film_list'])
