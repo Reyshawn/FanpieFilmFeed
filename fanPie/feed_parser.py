@@ -185,13 +185,19 @@ class JsonParser:
             return scoring + '<p>平均分: ' + ave['score'] + '</p>' if ave else scoring
 
         def _format_outline(s):
-            s = s.split('；')
-            if s[-1] == '':
-                s.pop()
-            s = ['<p>' + i + '</p>' for i in s]
+            patterns = [
+                r'((第?[0-9]小时)?第?[0-9]{1,2}[秒|分]钟?半?-((第?[0-9]小时)?第?[0-9]{1,2}分钟?半?)?(尾声)?)',
+                r'([0-9]{2}:[0-9]{2}:[0-9]{2}-[0-9]{2}:[0-9]{2}:[0-9]{2})',
+                r'([0-9][）)、])',
+                r'(开场曲)',
+                r'(结束曲)',
+                r'(影片(《[^》]*?》)?(\([^\)]*?\))?(重要)?信息[^简要介绍])'
+            ]
+            for pattern in patterns:
+                s = re.sub(pattern, r'\n\1', s)
+            s = s.split('\n')
+            s = ['<p>' + i +'</p>' for i in s]
             s = '\n'.join(s)
-            # s = s.replace('&lt;', '<')
-            # s = s.replace('&gt;', '>')
             s = s.replace('&amp;', '&')
             s = re.sub(r'(下载完整节目)?(收听节目)?请点击(文末)?\"阅读原文\"按钮。', '', s)
             s = s.replace('（以下广告，由微信平台自动插入，我们编辑文章时看不到内容，每位读者看到的也并不相同）', '')
