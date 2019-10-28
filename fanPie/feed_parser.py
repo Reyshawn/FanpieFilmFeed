@@ -206,10 +206,11 @@ class JsonParser:
 
         for i, item in enumerate(self._items):
             hosts = item['hosts']
+            film = '<h1>『' + item['film'] + '』</h1>\n\n'
             scoring = _format_scoring(item['shownotes']['film_scoring'], hosts)
             outline = _format_outline(item['shownotes']['film_outline'])
             f_list = _format_list(item['shownotes']['film_list'])
-            summary = scoring + '\n\n' + outline + '\n\n' + f_list
+            summary = film + scoring + '\n\n' + outline + '\n\n' + f_list
             summary = summary.replace('❌', '🎬')
             item['summary'] = summary
 
