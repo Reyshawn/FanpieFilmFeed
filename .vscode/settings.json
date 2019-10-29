@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/Users/reyshawn/Desktop/FanpieFilm/bin/python3.7",
+    "python.pythonPath": "${workspaceFolder}/bin/python3.7",
     "editor.wordWrap": "off",
     "editor.tabSize": 4
 }
