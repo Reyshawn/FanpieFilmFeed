@@ -10,7 +10,7 @@ censored = {
     '一九八七': '1987：黎明到來的那一天'
 }
 
-class FeedParser:
+class feedParser:
     def __init__(self, json):
         self.E = builder.ElementMaker(nsmap={
             'atom':'http://www.w3.org/2005/Atom',
@@ -73,7 +73,7 @@ class FeedParser:
         with open(path, 'wb+') as f:
             f.write(etree.tostring(self.rss, xml_declaration=True, encoding='UTF-8'))
 
-class JsonParser:
+class jsonParser:
     def __init__(self, path, other):
         if not os.path.isabs(path):
             path = os.path.join(os.path.dirname(__file__), path)
@@ -286,7 +286,7 @@ def format_time(s):
 
 
 if __name__ == "__main__":
-    a = JsonParser('output.json', 'helper.rss')
+    a = jsonParser('output.json', 'helper.rss')
     feed = a.feed()
-    xml = FeedParser(feed)
+    xml = feedParser(feed)
     xml.save('fanPieFilm.rss')
