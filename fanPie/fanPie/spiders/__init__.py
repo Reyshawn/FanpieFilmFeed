@@ -34,3 +34,29 @@ def parse_response(response, l):
     pub_date = re.search(r'[a-z]="([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))";', response.text)
     pub_date = pub_date[1] if pub_date else '❌'
     l.add_value('pub_date', pub_date)
+
+
+def validate_item(l):
+    '''validate that there is no empty field of the item
+    Args:
+        l (ItemLoader): https://docs.scrapy.org/en/latest/topics/loaders.html
+    Returns:
+        bool: the return value, if failed, it will raise a ValueError.
+    '''
+    check_list = [
+        'episode',
+        'film',
+        'title',
+        'hosts',
+        'shownotes',
+        'url',
+        'duration',
+        'pub_date',
+        'link'
+    ]
+
+    for c in check_list:
+        t = l.get_collected_values(c)
+        if len(t) == 0 or t[0] == '' or t[0] == '❌':
+            raise ValueError(f'Could not find {c} in ItemLoader')
+    return True

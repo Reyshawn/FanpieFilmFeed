@@ -1,16 +1,17 @@
 import scrapy
 from scrapy.loader import ItemLoader
 
-if __name__ != "__main__":
-    from ..items import FanpieItem
-from . import parse_response
+from ..items import FanpieItem
+from . import parse_response, validate_item
 import re
-from scrapy.crawler import CrawlerProcess
-from scrapy.utils.project import get_project_settings
 
 
 class updateSpider(scrapy.Spider):
     name = 'episode'
+    custom_settings = {
+        'FEED_FORMAT': 'json',
+        'FEED_URI': 'latest.json'
+    }
     # start_urls = ['https://mp.weixin.qq.com/s/uF0GiJbi4A5WBxq5iUPuqQ']
 
     def __init__(self, url='', episode='', film='', hosts=[]):
@@ -19,8 +20,7 @@ class updateSpider(scrapy.Spider):
         self._film = film
         self._hosts = hosts.split(',')
 
-    def parse(self, response):
-        
+    def parse(self, response):        
         l = ItemLoader(item=FanpieItem(), response=response)
         l.add_css('title', '.rich_media_title::text')
 
@@ -31,16 +31,10 @@ class updateSpider(scrapy.Spider):
 
         parse_response(response, l)
 
+        validate_item(l)
+
         yield l.load_item()
 
 
 if __name__ == "__main__":
-    import sys
-    import os
-    base_path = os.path.abspath('./') # add parent directory
-    sys.path.append(base_path)
-
-    from fanPie.fanPie.items import FanpieItem
-    process = CrawlerProcess(get_project_settings())
-    process.crawl(updateSpider)
-    process.start()
+    pass
