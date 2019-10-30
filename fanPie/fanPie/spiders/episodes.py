@@ -6,6 +6,11 @@ import re
 
 class filmSpider(scrapy.Spider):
     name = "episodes"
+    custom_settings = {
+        'FEED_FORMAT': 'json',
+        'FEED_URI': 'output.json'
+    }
+
     start_urls = [
         'https://mp.weixin.qq.com/s/V6LfeY6Mki8VDyFYyfud2Q'
     ]

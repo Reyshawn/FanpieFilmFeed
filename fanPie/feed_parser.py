@@ -75,8 +75,6 @@ class feedParser:
 
 class jsonParser:
     def __init__(self, path, other):
-        if not os.path.isabs(path):
-            path = os.path.join(os.path.dirname(__file__), path)
         with open(path)  as f:
             self._items = json.load(f)
 
