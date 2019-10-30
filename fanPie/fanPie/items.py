@@ -20,6 +20,7 @@ class FanpieItem(scrapy.Item):
     url = scrapy.Field(output_processor=TakeFirst())
     duration = scrapy.Field(output_processor=TakeFirst())
     pub_date = scrapy.Field(output_processor=TakeFirst())
+    link = scrapy.Field(output_processor=TakeFirst())
 
 
 if __name__ == "__main__":

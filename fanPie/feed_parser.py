@@ -260,7 +260,7 @@ class jsonParser:
         for i, item in enumerate(self._items):
             tmp = {}
             tmp['title'] = 'Episode ' + item['episode'] + ' | ' + _format_title(item['title'])
-            tmp['link'] = item['url']
+            tmp['link'] = item['link']
             tmp['guid'] = 'fanpie_' + re.search(r'\/([\_\-a-zA-Z0-9]*)\.mp3', item['url'])[1]
             tmp['pubDate'] = format_time(item['pub_date'])
             tmp['author'] = ', '.join(item['hosts'])
