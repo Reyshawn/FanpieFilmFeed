@@ -18,17 +18,17 @@ if __name__ == "__main__":
     with open('output.json', 'r') as f:
         output = json.load(f)
     
-    episode = int(output[0]['episode']) + 1
-    episode = f"{episode:03d}" # '001' '012' '174' format
+    # episode = int(output[0]['episode']) + 1
+    # episode = f"{episode:03d}" # '001' '012' '174' format
 
     if os.path.isfile('latest.json'):
         os.remove('latest.json')
 
     kwargs = {
-        'url':'https://mp.weixin.qq.com/s/USkByuOUJZuBhQYAENCA4Q',
-        'episode': '178 § 1', # episode
-        'film': '小丑',
-        'hosts': '杨超,鲁韵子,波米'
+        'url':'https://mp.weixin.qq.com/s/t8L1u6iGwWuF5cxbnZzjRQ',
+        'episode': '180', # episode
+        'film': '爱尔兰人',
+        'hosts': '荡科长,雷普利,波米'
     }
 
     process.crawl('episode', **kwargs)
