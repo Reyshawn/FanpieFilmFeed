@@ -25,8 +25,8 @@ if __name__ == "__main__":
         os.remove('latest.json')
 
     kwargs = {
-        'url':'https://mp.weixin.qq.com/s/VkkvBCA9KOZBJsUdurHs8Q',
-        'episode': '182', # episode
+        'url':'https://mp.weixin.qq.com/s/ns3YBcE9uy8XfobeHh4YpA',
+        'episode': '182 § 1', # episode
         'film': '好莱坞往事',
         'hosts': '靳锦,法兰西胶片,波米'
     }
