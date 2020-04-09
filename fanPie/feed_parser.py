@@ -234,7 +234,7 @@ class jsonParser:
             scoring = _format_scoring(item['shownotes']['film_scoring'], hosts)
             outline = _format_outline(item['shownotes']['film_outline'])
             f_list = _format_list(item['shownotes']['film_list'])
-            summary = film + scoring + '\n\n' + outline + '\n\n' + f_list
+            summary = film + '<p></p>\n\n' + scoring + '\n\n<p></p>\n\n' + outline + '\n\n<p></p>\n\n' + f_list
             summary = summary.replace('❌', '🎬')
             item['summary'] = summary
 
