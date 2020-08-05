@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "${workspaceFolder}/bin/python3.7",
+    "python.pythonPath": "${workspaceFolder}/bin/python3",
     "editor.wordWrap": "off",
     "editor.tabSize": 4
 }
