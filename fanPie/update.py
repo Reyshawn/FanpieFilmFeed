@@ -25,10 +25,10 @@ if __name__ == "__main__":
         os.remove('latest.json')
 
     kwargs = {
-        'url':'https://mp.weixin.qq.com/s/PbYgDPiiJWWK2tcNFO-6vQ',
+        'url':'https://mp.weixin.qq.com/s/AbnkcQFENt-1u1Aj1CCYoQ',
         'episode': episode,
-        'film': '金都',
-        'hosts': '清心,法兰西胶片'
+        'film': '曼克',
+        'hosts': '田野,雷普利,波米'
     }
 
     process.crawl('episode', **kwargs)
