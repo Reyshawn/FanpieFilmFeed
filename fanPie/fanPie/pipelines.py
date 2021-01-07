@@ -56,7 +56,7 @@ class NotesParser:
 
 
     def pars_scoring(self, section):
-        sc_key = ['综合分数', '主播打分', '评分', '总分', '本期主创团队']
+        sc_key = ['综合分数', '主播打分', '评分', '总分', '本期主创团队', '：约', '点击收听节目']
         if self._out_pos > -1:
             section = section[:self._out_pos]
         else:
