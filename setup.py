@@ -13,6 +13,6 @@ setup(
     url="https://github.com/Reyshawn/FanpieFilmFeed",
     packages=find_packages(exclude=['test']),
     install_requires=[
-        "scrapy==2.4.0"
+        "scrapy==2.5.1"
     ]
 )
