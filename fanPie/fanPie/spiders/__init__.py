@@ -57,6 +57,6 @@ def validate_item(l):
 
     for c in check_list:
         t = l.get_collected_values(c)
-        if len(t) == 0 or t[0] == '' or t[0] == '❌':
+        if len(t) == 0 or t[0] == '':
             raise ValueError(f'Could not find {c} in ItemLoader')
     return True
